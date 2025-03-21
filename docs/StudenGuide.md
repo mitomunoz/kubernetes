@@ -1,6 +1,6 @@
 # Guía de Estudio: Introducción a Kubernetes
 
-## I. Conceptos Fundamentales
+## Conceptos Fundamentales
 
 - Docker y Contenedores: Explica qué es Docker y cómo facilita el empaquetamiento y ejecución de aplicaciones.
 - Describe el concepto de un contenedor y sus beneficios en comparación con las máquinas virtuales tradicionales.
@@ -14,7 +14,7 @@
 - ¿Qué significa la capacidad de "escalar" aplicaciones en Kubernetes?
 - ¿Cómo aborda Kubernetes la recuperación ante desastres (disaster recovery)?
 
-### Arquitectura de Kubernetes
+## Arquitectura de Kubernetes
 
 - Identifica y describe los dos grandes grupos de componentes en la arquitectura de Kubernetes.
 - Nodos (Workers): ¿Qué es un "worker" o nodo en Kubernetes?
@@ -40,7 +40,7 @@
 - Nombra algunos proveedores de Kubernetes mencionados en el texto.
 - ¿Qué se puede utilizar para practicar con Kubernetes de forma local?
 
-## II. Quiz
+## Quiz
 
 - Explica brevemente la relación entre Docker y Kubernetes. ¿Por qué el conocimiento de Docker es útil para entender Kubernetes?
 - ¿Cuál es el principal problema que Kubernetes busca resolver al gestionar aplicaciones contenerizadas en un entorno con muchos servidores?
@@ -53,7 +53,7 @@
 - ¿Qué significa que Kubernetes utiliza "manifiestos declarativos"? ¿Cómo se aplica esto en la práctica?
 - Según el autor, ¿en qué tipo de entornos o con qué escala de infraestructura se vuelve particularmente recomendable el uso de Kubernetes?
 
-## III. Clave de Respuestas del Quiz
+## Clave de Respuestas del Quiz
 
 - Docker es una herramienta para crear y ejecutar aplicaciones en contenedores, mientras que Kubernetes es un orquestador que gestiona estos contenedores a gran escala. Conocer Docker es útil porque Kubernetes orquesta contenedores creados con Docker.
 - Kubernetes resuelve la complejidad de manejar muchos contenedores distribuidos en múltiples servidores, proporcionando herramientas para automatizar el despliegue, la escalabilidad, la gestión de recursos y la disponibilidad de las aplicaciones.
@@ -68,11 +68,10 @@
 - Utilizar manifiestos declarativos significa que los usuarios definen el estado deseado de su infraestructura y aplicaciones en archivos de configuración. Kubernetes se encarga de alcanzar y mantener ese estado, en lugar de requerir instrucciones paso a paso.
 - El uso de Kubernetes se vuelve particularmente recomendable en entornos con un gran número de contenedores y servidores, donde la gestión manual sería inviable, y se requiere alta disponibilidad, escalabilidad y automatización en el despliegue y la operación de las aplicaciones.
 
-## IV. Preguntas para Ensayo
+## Preguntas para Ensayo
 
 - Describe en detalle la arquitectura de Kubernetes, explicando la función de los componentes principales del plano de control (Masters) y los nodos (Workers), y cómo interactúan entre sí para gestionar aplicaciones contenerizadas.
 - Analiza los beneficios clave que Kubernetes ofrece en la gestión de aplicaciones en la nube o en infraestructuras complejas. - - Considera aspectos como la escalabilidad, la alta disponibilidad, la gestión de recursos y la recuperación ante fallos.
 - Compara y contrasta el uso de Docker con el uso de Kubernetes. ¿En qué escenarios es más apropiado utilizar Docker solo, y cuándo se vuelve esencial la adopción de un orquestador como Kubernetes?
 - Explica el concepto de "Servicio" en Kubernetes y describe los diferentes tipos de servicios mencionados en el texto. Discute la importancia de los servicios para habilitar la comunicación y el acceso a las aplicaciones dentro y fuera del clúster.
 - Discute la importancia de la naturaleza declarativa de Kubernetes, utilizando el concepto de "Deployment" como ejemplo. ¿Cómo simplifica este enfoque la gestión y el despliegue de aplicaciones en comparación con enfoques más imperativos?
-
