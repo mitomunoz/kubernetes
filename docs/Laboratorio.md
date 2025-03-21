@@ -11,7 +11,7 @@ Para desarrollo local es necesario instalar Dockers y activar Kubernetes o en su
 
 - Para iniciar el servicio de Minikube
   
-{%i include codeHeader.html %}
+
 
 ```bash
 minikube start
@@ -224,3 +224,6 @@ kubectl delete $NODO_NAME      # Donde $NODO_NAME es el nombre del nodo
 ```bash
 kubectl get deployment $DEPLOY_NAME n- kube-system -o yaml > archivo.yaml
 ```
+
+---
+{%i include codeHeader.html %}
