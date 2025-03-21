@@ -1,0 +1,9 @@
+[package]
+name = "microservicio-rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-web = "4.0"
+rand = "0.8" # Para generar fallos y retrasos aleatorios
+tokio = { version = "1", features = ["full"] } # Tokio es el runtime async necesario para el manejo de tiempos

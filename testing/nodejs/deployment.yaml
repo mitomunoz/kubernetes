@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservicio-prueba
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: microservicio
+  template:
+    metadata:
+      labels:
+        app: microservicio
+    spec:
+      containers:
+      - name: microservicio
+        image: tu-usuario-docker/microservicio-prueba:latest
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microservicio-prueba-service
+spec:
+  selector:
+    app: microservicio
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
