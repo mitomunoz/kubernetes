@@ -5,13 +5,13 @@
   - [Comandos para AWS EKS](#comandos-para-aws-eks)
   - [Comandos para administrar clusters](#comandos-para-administrar-clusters)
 
-{%i include codeHeader.html %}
-
 ## Instalación de Minikube
 
 Para desarrollo local es necesario instalar Dockers y activar Kubernetes o en su defecto instalar [Minikube]( https://minikube.sigs.k8s.io/docs/start/ )
 
 - Para iniciar el servicio de Minikube
+  
+{%i include codeHeader.html %}
 
 ```bash
 minikube start
