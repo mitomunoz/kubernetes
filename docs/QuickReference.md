@@ -267,5 +267,5 @@ spec:
 
 ## Referencias
 
-[Kubernetes basics - sitio oficial](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
-[Curso ultra-rapido del Pelao Nerd](https://www.youtube.com/watch?v=DCoBcpOA7W4)
+- [Kubernetes basics - sitio oficial](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
+- [Curso ultra-rapido del Pelao Nerd](https://www.youtube.com/watch?v=DCoBcpOA7W4)
