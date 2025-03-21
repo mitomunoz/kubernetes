@@ -226,4 +226,4 @@ kubectl get deployment $DEPLOY_NAME n- kube-system -o yaml > archivo.yaml
 ```
 
 ---
-{%i include codeHeader.html %}
+
