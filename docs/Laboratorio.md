@@ -14,19 +14,19 @@ Para desarrollo local es necesario instalar Dockers y activar Kubernetes o en su
 - Para iniciar el servicio de Minikube
 
 ```bash
-$> minikube start
+minikube start
 ```
 
 - Para obtener la version de Minikube:
 
 ```bash
-$> minikube version
+minikube version
 ```
 
 - Para ver todos los PODs incluyendo los que usa minikube
 
 ``` bash
-$> kubectl get pods -A
+kubectl get pods -A
 ```
 
 ``` bash
@@ -45,56 +45,56 @@ kubernetes-dashboard   kubernetes-dashboard-6fcdf4f6d-6g8kr         1/1     Runn
 - Para detener el servicio Minikube:
 
 ```bash
-$> minikube stop
+minikube stop
 ```
 
 - Para obetener el estado del servicio:
 
 ```bash
-$> minikube status  
+minikube status  
 ```
 
 - Para ver la version de kubectl
 
 ```bash
-$> kubectl version
+kubectl version
 ```
 
 - Para obtener información del cluster
 
 ```bash
-$> kubectl cluster-info
+kubectl cluster-info
 ```
 
 - Para obtener los nodos del cluster
 
 ```bash
-$> kubectl get nodes
+kubectl get nodes
 ```
 
 - Para ver el estado de los todos recursos (PODS):
 
 ```bash
-$> kubectl get pods -A
+kubectl get pods -A
 ```
 
 - Para visualizar el dashboard:
 
 ```bash
-$> minikube dashboard
+minikube dashboard
 ```
 
 - Para ver los addons instalados en tu minikube
 
 ```bash
-$> minikube addons list
+minikube addons list
 ```
 
 - Para activar los addons
 
 ```bash
-$> minikube addons enable metrics-server
-$> minikube addons enable dashboard
+minikube addons enable metrics-server
+minikube addons enable dashboard
 ````
 
 > Nota:
@@ -116,21 +116,21 @@ $> minikube addons enable dashboard
 - Para ver los Pods desplegados
 
 ```bash
-$> kubectl get pods
-$> kubectl get pods -o wide
+kubectl get pods
+kubectl get pods -o wide
 ```
 
 - Para obtener mayor información asociada a un Pod
 
 ```bash
-$> kubectl get -o yaml  pod <pod-name>
-$> kubectl get -o json  pod <pod-name>
+kubectl get -o yaml  pod <pod-name>
+kubectl get -o json  pod <pod-name>
 ```
 
 - Para describir los Pods
 
 ```bash3
-$> kubectl describe pods
+kubectl describe pods
 ```
 
 - Uso de filtros basado en conjuntos
@@ -138,89 +138,89 @@ En el siguiente ejemplo se buscaran todos los PODS que tengan la clave environme
 y la capa (tier) sea frontend
 
 ```bash
-$> kubectl get pods -l 'environment in (production),tier in (frontend)'
+kubectl get pods -l 'environment in (production),tier in (frontend)'
 ```
 
 - Para ver los Logs de un Pod
 
 ```bash
-$> kubectl get logs $POD_NAME  #Donde $POD_NAME es una variable de entorno con el nombre del Pod obtenido en pasos anteriores
+kubectl get logs $POD_NAME  #Donde $POD_NAME es una variable de entorno con el nombre del Pod obtenido en pasos anteriores
 ```
 
 - Para ejecutar comandos en un Pod
 
 ```bash
-$> kubectl exec $POD_NAME -- env  # Ejecuta el comando env para ver las variables de entorno del Pod
+kubectl exec $POD_NAME -- env  # Ejecuta el comando env para ver las variables de entorno del Pod
 
-$> kubectl exec $POD_NAME -- bash # Abre una shell dentro del Pod
+kubectl exec $POD_NAME -- bash # Abre una shell dentro del Pod
 ```
 
 - Para ver los deployments, si desea obtener la salida en formato V1 de la API de Kubernetes, use .v1.apps
 
 ``` bash
-$> kubectl get deployments
-$> kubectl get deployments.v1.apps -o json
-$> kubectl get deployments.v1.apps -o yaml
+kubectl get deployments
+kubectl get deployments.v1.apps -o json
+kubectl get deployments.v1.apps -o yaml
 ```
 
 - Para eliminar un deployment usando el archivo obetenido arriba
 
 ```bash
-$> kubectl delete -f <archivo-deployment>
+kubectl delete -f <archivo-deployment>
 ```
 
 - Para obtener los namespaces y por ejemplo los pods del sistema Kubernetes
 
 ```bash
-$> kubectl get namespaces
-$> kubectl --namespace=kube-system get pods
-$> kubectl -n kube-system get pods
+kubectl get namespaces
+kubectl --namespace=kube-system get pods
+kubectl -n kube-system get pods
 ```
 
 - Para obtener el **ReplicaSet** de un **deployment**
 
 ```bash
-$> kubectl get rs
+kubectl get rs
 ```
 
 - Para obtener los controladores de replicación y los servicios
 
 ```bash
-$>   kubectl get rc,services
+  kubectl get rc,services
 ```
 
 - Para mas detalles de comando get
 
 ```bash
-$> kubectl  get -h
+kubectl  get -h
 ```
 
 - Para ver los valores de configuracion
 
 ```bash
-$> kubectl config view
+kubectl config view
 ```
 
 - Para forwardear comunicaciones entre el cluster y tu red privada (proxy)
 
 ```bash
-$> kubectl proxy
+kubectl proxy
 ```
 
 -Para buscar nodos/pods que contengan un string especifico "109"
 
 ```bash
-$> kubectl get nodes -o wide|grep "109"
+kubectl get nodes -o wide|grep "109"
 ```
 
 - Para eliminar un nodo 
 
 ```bash
-$> kubectl delete $NODO_NAME      # Donde $NODO_NAME es el nombre del nodo
+kubectl delete $NODO_NAME      # Donde $NODO_NAME es el nombre del nodo
 ```
 
 - Para Bajar un deploy y dejarlo en un archivo "archivo.yaml"
 
 ```bash
-$> kubectl get deployment $DEPLOY_NAME n- kube-system -o yaml > archivo.yaml
+kubectl get deployment $DEPLOY_NAME n- kube-system -o yaml > archivo.yaml
 ```
