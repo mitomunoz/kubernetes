@@ -1,28 +1,36 @@
 # Contenido
+
 - [Contenido](#contenido)
-- [Instalación de Minikube](#instalación-de-minikube)
+  - [Instalación de Minikube](#instalación-de-minikube)
+- [Comandos para AWS EKS](#comandos-para-aws-eks)
+- [Comandos para administrar clusters](#comandos-para-administrar-clusters)
 
+{%i include codeHeader.html %}
 
-# Instalación de Minikube 
+## Instalación de Minikube
+
 Para desarrollo local es necesario instalar Dockers y activar Kubernetes o en su defecto instalar [Minikube]( https://minikube.sigs.k8s.io/docs/start/ )
 
-* Para iniciar el servicio de Minikube:
+- Para iniciar el servicio de Minikube
 
-```
+```bash
 $> minikube start
 ```
 
-* Para obtener la version de Minikube:
-```
+- Para obtener la version de Minikube:
+
+```bash
 $> minikube version
 ```
-* Para ver todos los PODs incluyendo los que usa minikube
-{%i include codeHeader.html %}
-```
+
+- Para ver todos los PODs incluyendo los que usa minikube
+
+
+``` bash
 $> kubectl get pods -A
 ```
 
-```
+``` bash
 NAMESPACE              NAME                                         READY   STATUS    RESTARTS   AGE
 kube-system            coredns-558bd4d5db-n66wq                     1/1     Running   5          15d
 kube-system            etcd-minikube                                1/1     Running   5          15d
