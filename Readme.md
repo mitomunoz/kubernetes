@@ -4,5 +4,6 @@
 - [Guía Rápida](./docs/QuickReference.md)
 - [Laboratorio](./docs/Laboratorio.md)
 - [Guia de estudio de kubernetes](./docs/StudenGuide.md)
+- [Apisix route](./apisix/README.md)
 - [K6 Load Testing Tool](./testing/README.md)
 - [Glosario de Términos](./docs/Glossary.md)
