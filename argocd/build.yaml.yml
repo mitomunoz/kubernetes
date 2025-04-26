@@ -1,0 +1,10 @@
+build:
+  - docker build -t registry.acme.cl/rut-validator:abc123 .
+  - docker push registry.acme.cl/rut-validator:abc123
+ 
+promote:
+  - git clone https://gitlab-gitops.acme.cl/platform/apps-rut-validator.git
+  - cd environments/dev
+  - yq e '.image.tag = "abc123"' -i values.yaml
+  - git commit -am "Promo imagen abc123"
+  - git push
