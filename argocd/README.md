@@ -2,11 +2,18 @@
 
 Vamos a instalar, configurar y probar ARGOCD
 
-## Instalación ARGOCD en el K8s
+## Obtención del manifiesto de instalación
 
 ```bash
-    kubectl create namespace argocd
-    kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+# obtener manifiesto
+wget https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# reemplazar imagenes a repos propios
+cat install.yaml |grep image:|sort |uniq    
+
+sed -i -e 's/ghcr.io\/dexidp\/dex:v2.41.1/279527989600.dkr.ecr.us-east-1.amazonaws.com\/ghcr.io\/dexidp\/dex:v2.41.1/g' install.yaml
+sed -i -e 's/quay.io\/argoproj\/argocd:v2.14.6/279527989600.dkr.ecr.us-east-1.amazonaws.com\/quay.io\/argoproj\/argocd:v2.14.6/g' install.yaml
+sed -i -e 's/redis:7.0.15-alpine/279527989600.dkr.ecr.us-east-1.amazonaws.com\/redis:7.0.15-alpine/g' install.yaml
 ```
 
 ## Imagenes a bajar y subir al repo local
@@ -15,12 +22,27 @@ Vamos a instalar, configurar y probar ARGOCD
 - quay.io/argoproj/argocd:v2.14.6
 - redis:7.0.15-alpine
 
+## Instalación ARGOCD en el K8s
+
+```bash
+  kubectl create namespace argocd
+  kubectl apply -n argocd -f install.yaml
+```
+
+## Desinstalación ARGOCD en el K8s
+
+```bash
+  kubectl delete -f install.yaml
+  kubectl delete namespace argocd
+```
+
+
+
 ## Aplicar el PATCH al/los despliegues
 
 TODO: apply patch de los deploys o crear un heml propio (buscar uno weno para ARGO)
 helm repo add argo https://argoproj.github.io/argo-helm
 helm install argo-cd argo/argo-cd --namespace argocd --create-namespace
- 
 
 ## Instalar el cliente ARGOCD
 
