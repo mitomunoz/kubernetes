@@ -43,7 +43,7 @@ helm repo add argo https://argoproj.github.io/argo-helm
 
 helm pull argo/argo-cd
 
-helm install argo-cd argo/argo-cd --namespace argocd --create-namespace \
+helm install argo-cd ./argo-cd-7.9.0.tgz --namespace argocd --create-namespace \
 --set global.image.repository=279527989600.dkr.ecr.us-east-1.amazonaws.com/quay.io/argoproj/argocd \
 --set dex.pdb.image.repository=279527989600.dkr.ecr.us-east-1.amazonaws.com
 
@@ -81,6 +81,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 ```bash
 helm uninstall -n argocd argo-cd
+kubectl delete namespaces argocd
 ```
 
 ## Instalar el cliente ARGOCD
@@ -127,3 +128,8 @@ promote:
   - git push
 ```
 
+---
+
+Referencias
+
+- https://youtu.be/MeU5_k9ssrs?si=haLwuJAuvNMlMqjC
