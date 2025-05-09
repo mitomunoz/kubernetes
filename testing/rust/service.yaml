@@ -1,0 +1,88 @@
+# --- Service Definition for test-ms-rust ---
+# This Service exposes your Deployment within the cluster
+# so that the Ingress can route traffic to it.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-ms-rust-svc  # Name of the Service
+  namespace: test          # Namespace where your Deployment is
+  labels:
+    app: test-ms-rust      # Label to associate with the Ingress or for other selectors
+spec:
+  selector:
+    app: test-ms-rust  # This MUST match the 'matchLabels.app' in your Deployment
+  ports:
+    - name: http         # Optional: A name for the port
+      protocol: TCP
+      port: 3000       # Port on which the Service will be exposed
+      targetPort: 3000   # Port your container (test-ms-rust) is listening on
+  type: ClusterIP        # Use ClusterIP when alb.ingress.kubernetes.io/target-type: ip
+                         # Use NodePort if alb.ingress.kubernetes.io/target-type: instance
+
+---
+# --- Ingress Definition for test-ms-rust using ALB ---
+# This Ingress resource will instruct the AWS Load Balancer Controller
+# to provision an Application Load Balancer for your service.
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ms-rust-ingress
+  namespace: test # Namespace where your Deployment and Service are
+  annotations:
+    # Essential: Specifies that the AWS Load Balancer Controller handles this Ingress.
+    # The ingressClassName field is the preferred way over this annotation.
+    # kubernetes.io/ingress.class: alb # This is deprecated, use spec.ingressClassName instead.
+
+    # --- AWS Load Balancer Controller Specific Annotations ---
+
+    # Scheme: 'internet-facing' for public ALBs, 'internal' for private ALBs.
+    alb.ingress.kubernetes.io/scheme: internet-facing
+
+    # Target Type: 'ip' to route traffic directly to Pod IPs (recommended for EKS).
+    # 'instance' routes to NodePort on EC2 instances.
+    alb.ingress.kubernetes.io/target-type: ip
+
+    # Listener Ports: Defines the ports the ALB will listen on.
+    # Default is HTTP:80 if not specified and no TLS.
+    # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    # For HTTPS, you would add: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    # and configure alb.ingress.kubernetes.io/certificate-arn.
+
+    # Certificate ARN: If using HTTPS, specify your ACM certificate ARN.
+    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:YOUR_ACCOUNT_ID:certificate/YOUR_CERTIFICATE_ID
+
+    # Health Check Path: Customize the health check path for the target group.
+    # Your application should return a 200 OK on this path.
+    # alb.ingress.kubernetes.io/healthcheck-path: /health # Replace with your app's health check endpoint
+    # alb.ingress.kubernetes.io/healthcheck-port: 'traffic-port' # Or a specific port
+    # alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+
+    # Subnets: Manually specify subnets for the ALB if auto-discovery is not desired or not working.
+    # Ensure these subnets are tagged correctly for the ALB controller (kubernetes.io/role/elb or kubernetes.io/role/internal-elb).
+    # alb.ingress.kubernetes.io/subnets: subnet-xxxxxxxxxxxxxxxxx, subnet-yyyyyyyyyyyyyyyyy
+
+    # Other useful annotations:
+    # alb.ingress.kubernetes.io/actions.<service-name>: Can define authentication, redirects etc.
+    # alb.ingress.kubernetes.io/group.name: To group multiple Ingress resources into a single ALB.
+    # alb.ingress.kubernetes.io/tags: To add AWS tags to the ALB.
+    # alb.ingress.kubernetes.io/wafv2-acl-arn: To attach a WAFv2 WebACL.
+spec:
+  # This field is crucial for specifying the Ingress controller.
+  # It should match the controller you have deployed (AWS Load Balancer Controller).
+  ingressClassName: alb
+  rules:
+    # You should replace 'your-eks-cluster-domain.com' with your actual domain
+    # or remove the 'host' field if you are testing with the ALB's DNS name directly.
+    # If 'host' is not specified, the rule applies to all virtual hosts.
+    - host: your-eks-cluster-domain.com # Optional: Define a host for DNS routing
+      http:
+        paths:
+          - path: / # The path you want to expose your service on.
+            pathType: Prefix # Options: Prefix, Exact, ImplementationSpecific
+            backend:
+              service:
+                name: test-ms-rust-svc # Must match the Service name defined above
+                port:
+                  number: 3000 # Must match the 'port' defined in the Service

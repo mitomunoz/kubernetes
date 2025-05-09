@@ -38,6 +38,18 @@ docker run -p 3300:3300 -e PORT=3300 -e DEBUG=app:server microservicio-go:local
 k6 run k6_test.js
 ```
 
+## Despliegue sobre K8s
+
+Para desplegar en AWS
+
+```bash
+kubectl apply -f deploy.yaml -n test
+kubectl get pods -n test
+
+```
+
+
+
 ## Troubleshoting
 
 Conectarse al contenedor y revisar el contenido de la imagen
