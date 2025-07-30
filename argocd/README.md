@@ -1,8 +1,21 @@
 # GITOPS con ARGOCD
 
-Vamos a instalar, configurar y probar ARGOCD
+Vamos a instalar, configurar y probar en AWS/EKS
 
 Resúmen de contenidos
+- [GITOPS con ARGOCD](#gitops-con-argocd)
+  - [Instalación ArgoCD](#instalación-argocd)
+    - [Obtención del manifiesto de instalación](#obtención-del-manifiesto-de-instalación)
+    - [Imagenes a bajar y subir al repo local](#imagenes-a-bajar-y-subir-al-repo-local)
+    - [Aplicar el manifiesto con imagenes modificadas](#aplicar-el-manifiesto-con-imagenes-modificadas)
+  - [Desinstalación ARGOCD en el K8s](#desinstalación-argocd-en-el-k8s)
+  - [Instalación con Helm](#instalación-con-helm)
+  - [Desinstalación con Helm](#desinstalación-con-helm)
+  - [Instalar el cliente ARGOCD](#instalar-el-cliente-argocd)
+    - [Obtención de la password del cliente ArgoCD](#obtención-de-la-password-del-cliente-argocd)
+  - [Activación del dashboard](#activación-del-dashboard)
+    - [Establece el acceso al REPO que usa ARGO para GITOPS](#establece-el-acceso-al-repo-que-usa-argo-para-gitops)
+  - [Ejemplo de cambio de la imagen de la APP para que ARGO la lea y aplique valores](#ejemplo-de-cambio-de-la-imagen-de-la-app-para-que-argo-la-lea-y-aplique-valores)
 
 ## Instalación ArgoCD
 
@@ -132,7 +145,10 @@ Dado que el ALB en AWS no puede llegar a un SVC de tipo ClusterIP, creamos uno d
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+        alb.ingress.kubernetes.io/backend-protocol-version: GRPC # This tells AWS to send traffic from the ALB using GRPC. Plain HTTP2 can be used, but the health checks wont be available because argo currently downgrade non-grpc calls to HTTP1
   labels:
+    app: argocd-server-alb
     app.kubernetes.io/component: server
     app.kubernetes.io/name: argocd-server-alb
     app.kubernetes.io/part-of: argocd
@@ -144,7 +160,7 @@ spec:
   - name: http
     port: 80
     protocol: TCP
-    targetPort: 8080
+    targetPort: 80
   - name: https
     port: 443
     protocol: TCP
@@ -164,9 +180,14 @@ metadata:
   name: argocd-ingress
   namespace: argocd
   annotations:
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    # Use this annotation (which must match a service name) to route traffic to HTTP2 backends.
+    alb.ingress.kubernetes.io/conditions.argocd-server-alb: |
+        [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "Content-Type", "values":["application/grpc"]}}]
+
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/ip-address-type: ipv4
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     alb.ingress.kubernetes.io/tags: tipo=privado
     alb.ingress.kubernetes.io/subnets: subnet-00466cb725ceb94e6 #Intra-priv Coquena  
     alb.ingress.kubernetes.io/customer-owned-ipv4-pool: ipv4pool-coip-0b9f2b4516b10245f
