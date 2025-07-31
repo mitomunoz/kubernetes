@@ -145,8 +145,6 @@ Dado que el ALB en AWS no puede llegar a un SVC de tipo ClusterIP, creamos uno d
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-        alb.ingress.kubernetes.io/backend-protocol-version: GRPC # This tells AWS to send traffic from the ALB using GRPC. Plain HTTP2 can be used, but the health checks wont be available because argo currently downgrade non-grpc calls to HTTP1
   labels:
     app: argocd-server-alb
     app.kubernetes.io/component: server
@@ -156,18 +154,18 @@ metadata:
   namespace: argocd
 spec:
   type: NodePort
+  sessionAffinity: None
   ports:
   - name: http
     port: 80
     protocol: TCP
-    targetPort: 80
+    targetPort: 8080
   - name: https
     port: 443
     protocol: TCP
     targetPort: 8080
   selector:
     app.kubernetes.io/name: argocd-server
-
 ```
 
 Cree el archivo argocd-ingress.yaml con el siguiente contenido apuntando al SVC recién creado
@@ -182,16 +180,12 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/backend-protocol: HTTP
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    # Use this annotation (which must match a service name) to route traffic to HTTP2 backends.
-    alb.ingress.kubernetes.io/conditions.argocd-server-alb: |
-        [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "Content-Type", "values":["application/grpc"]}}]
-
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/ip-address-type: ipv4
     alb.ingress.kubernetes.io/tags: tipo=privado
     alb.ingress.kubernetes.io/subnets: subnet-00466cb725ceb94e6 #Intra-priv Coquena  
     alb.ingress.kubernetes.io/customer-owned-ipv4-pool: ipv4pool-coip-0b9f2b4516b10245f
-    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/target-type: ip
     #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:279527989600:certificate/c3bc4666-2862-49e8-8305-4ab685a7f198
 spec:
   ingressClassName: alb
