@@ -85,9 +85,9 @@ Para inicializar la sesion se requiere conocer el usuario y la password
 
 ```bash
 # Defina su server según corresponda
-ARGO_SERVER="localhost:8080"
-ARGO_SERVER="k8s-argocd-argocdin-87c0015897-1773973690.us-east-1.elb.amazonaws.com"
-ARGO_SERVER="internal-k8s-argocd-argocd-8efea739a6-1432857483.us-east-1.elb.amazonaws.com"
+ARGO_SERVER="localhost:8080" # Para uso con minikube
+ARGO_SERVER="k8s-argocd-argocdin-87c0015897-1773973690.us-east-1.elb.amazonaws.com" # Para uso con Web UI
+ARGO_SERVER="internal-k8s-argocd-argocd-8efea739a6-1432857483.us-east-1.elb.amazonaws.com" # Para uso con Cli
 echo "ARGO_SERVER: [${ARGO_SERVER}]"
 
 argocd login $ARGO_SERVER --username admin --password $ARGO_ADMIN_PWD --insecure
