@@ -1,6 +1,12 @@
 # Administración de ArgoCD via línea de comandos
 
 Para habilitar el uso de Cli se debe crear un Service y un Ingress pero de tipo GRPC debido a restricciones propias del server de ArgoCD
+- [Administración de ArgoCD via línea de comandos](#administración-de-argocd-via-línea-de-comandos)
+  - [Creación del servicio GRPC](#creación-del-servicio-grpc)
+  - [Creación del Ingress interno](#creación-del-ingress-interno)
+  - [Obtención de la clave de admin por defecto](#obtención-de-la-clave-de-admin-por-defecto)
+  - [Login](#login)
+  - [Agregar un repositorio Git](#agregar-un-repositorio-git)
 
 ## Creación del servicio GRPC
 
@@ -31,43 +37,41 @@ spec:
 
 ```yaml
 # argocd-ingress-grpc.yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-annotations:
-    alb.ingress.kubernetes.io/backend-protocol: HTTPS
-    # Use this annotation (which must match a service name) to route traffic to HTTP2 backends.
-    alb.ingress.kubernetes.io/conditions.argogrpc: |
-    [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "Content-Type", "values":["application/grpc"]}}]
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/ssl-redirect: "443"
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:279527989600:certificate/c3bc4666-2862-49e8-8305-4ab685a7f198
-    alb.ingress.kubernetes.io/subnets: subnet-00466cb725ceb94e6 #Intra-priv Coquena
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/tags: tipo=privado
-name: argocd
-namespace: argocd
-spec:
-ingressClassName: alb
-rules:
-- host:
-    http:
-    paths:
-    - path: /
-        backend:
-        service:
-            name: argogrpc # The grpc service must be placed before the argocd-server for the listening rules to be created in the correct order
-            port:
-            number: 443
-        pathType: Prefix
-    - path: /
-        backend:
-        service:
-            name: argocd-server
-            port:
-            number: 443
-        pathType: Prefix
-
+ apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      alb.ingress.kubernetes.io/backend-protocol: HTTPS
+      # Use this annotation (which must match a service name) to route traffic to HTTP2 backends.
+      alb.ingress.kubernetes.io/conditions.argogrpc: |
+        [{"field":"http-header","httpHeaderConfig":{"httpHeaderName": "Content-Type", "values":["application/grpc"]}}]
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/ssl-redirect: "443"
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:279527989600:certificate/c3bc4666-2862-49e8-8305-4ab685a7f198
+      alb.ingress.kubernetes.io/subnets: subnet-00466cb725ceb94e6 #Intra-priv Coquena
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/tags: tipo=privado
+    name: argocd
+    namespace: argocd
+  spec:
+    ingressClassName: alb
+    rules:
+    - host:
+      http:
+        paths:
+        - path: /
+          backend:
+            service:
+              name: argogrpc # The grpc service must be placed before the argocd-server for the listening rules to be created in the correct order
+              port:
+                number: 443
+          pathType: Prefix
+        - path: /
+          backend:
+            service:
+              name: argocd-server
+              port:
+          pathType: Prefix
 ```
 
 ## Obtención de la clave de admin por defecto
