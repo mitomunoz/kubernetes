@@ -6,7 +6,6 @@ Para habilitar el uso de Cli se debe crear un Service y un Ingress pero de tipo 
   - [Creación del Ingress interno](#creación-del-ingress-interno)
   - [Obtención de la clave de admin por defecto](#obtención-de-la-clave-de-admin-por-defecto)
   - [Login](#login)
-  - [Agregar un repositorio Git](#agregar-un-repositorio-git)
 
 ## Creación del servicio GRPC
 
@@ -95,30 +94,4 @@ ARGO_SERVER="internal-k8s-argocd-argocd-8efea739a6-1432857483.us-east-1.elb.amaz
 echo "ARGO_SERVER: [${ARGO_SERVER}]"
 
 argocd login $ARGO_SERVER --username admin --password $ARGO_ADMIN_PWD --insecure
-```
-
-## Agregar un repositorio Git
-
-Una vez establecido el login se pueden listar, agregar y eliminar los repositorios Git
-
-```bash
-REPO_NAME="poc"
-PROJECT="argoprj"
-GIT_REPO="https://gitlabcloud.banco.bestado.cl/arquitectura/terraform/gitops/poc.git"
-GIT_USER="jmuno10" 
-GIT_PWD="ycH7acat51-3taFoiDex"
-echo "REPO_NAME: [${REPO_NAME}]"
-echo "PROJECT  : [${PROJECT}]"
-echo "GIT_REPO : [${GIT_REPO}]"
-echo "GIT_USER : [${GIT_USER}]"
-echo "GIT_PWD  : [${GIT_PWD}]"
-
-# Listar repositorios
-argocd repo list
-
-# Agregar repositorios
-argocd repo add ${GIT_REPO} --type git --name ${REPO_NAME} --project ${PROJECT} --username ${GIT_USER} --password ${GIT_PWD} --insecure-ignore-host-key
-
-# Para eliminar repositorios se debe usar la URL y no el nombre
-argocd repo rm ${GIT_REPO}
 ```

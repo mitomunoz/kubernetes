@@ -13,8 +13,8 @@ Resúmen de contenidos
   - [Desinstalación con Helm](#desinstalación-con-helm)
   - [Instalar el cliente ARGOCD](#instalar-el-cliente-argocd)
     - [Obtención de la password del cliente ArgoCD](#obtención-de-la-password-del-cliente-argocd)
-  - [Activación del dashboard](#activación-del-dashboard)
-    - [Establece el acceso al REPO que usa ARGO para GITOPS](#establece-el-acceso-al-repo-que-usa-argo-para-gitops)
+  - [Activación de del Cli](#activación-de-del-cli)
+  - [Activación del Dashboard en AWS Outposts](#activación-del-dashboard-en-aws-outposts)
   - [Ejemplo de cambio de la imagen de la APP para que ARGO la lea y aplique valores](#ejemplo-de-cambio-de-la-imagen-de-la-app-para-que-argo-la-lea-y-aplique-valores)
 
 ## Instalación ArgoCD
@@ -125,105 +125,16 @@ ARGO_PWD=$(argocd admin initial-password -n argocd)
 echo "ARGO_PWD: [${ARGO_PWD}]"
 ```
 
-## Activación del dashboard
+## Activación de del Cli
 
-Para activar el dashboard se debe crear un ingress. En el caso AWS depende del Load Balancer.
+Para la mayoria de los casos es uso de la Cliente de ArgoCD bastará para realizar todas las operaciones. 
+Para ver mas detalles de la activación y uso de [Cli siga esta link](CLI-usage.md)
 
-En AWS, la subnet debe ser una subred intra-priv con rutas al Local Gateway correspondiente al Outpost donde vive.
+## Activación del Dashboard en AWS Outposts
 
-- Outposts Kenos  : lgw-04baf7227e545c480 (ID: op-0a472f28ca87bd8ab)
-- Outposts Coquena: lgw-073894fb6156ab0e0 (ID: op-04af07f1345f8c4ad)
+Para activar el [Dashboard, siga este link](AWS-dashboard.md)
 
-En Outposts -> LWG route tables, debe existir la asociación con la VPC que estamos usando.
-Y de ahi sacamos también el customer-owned-ipv4-pool.
-Revisar además las Rutas
 
-Dado que el ALB en AWS no puede llegar a un SVC de tipo ClusterIP, creamos uno de tipo NodePort
-
-```yaml
-# argocd-server-alb.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: argocd-server-alb
-    app.kubernetes.io/component: server
-    app.kubernetes.io/name: argocd-server-alb
-    app.kubernetes.io/part-of: argocd
-  name: argocd-server-alb
-  namespace: argocd
-spec:
-  type: NodePort
-  sessionAffinity: None
-  ports:
-  - name: http
-    port: 80
-    protocol: TCP
-    targetPort: 8080
-  - name: https
-    port: 443
-    protocol: TCP
-    targetPort: 8080
-  selector:
-    app.kubernetes.io/name: argocd-server
-```
-
-Cree el archivo argocd-ingress.yaml con el siguiente contenido apuntando al SVC recién creado
-
-```yaml
-# argocd-ingress.yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: argocd-ingress
-  namespace: argocd
-  annotations:
-    alb.ingress.kubernetes.io/backend-protocol: HTTP
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/ip-address-type: ipv4
-    alb.ingress.kubernetes.io/tags: tipo=privado
-    alb.ingress.kubernetes.io/subnets: subnet-00466cb725ceb94e6 #Intra-priv Coquena  
-    alb.ingress.kubernetes.io/customer-owned-ipv4-pool: ipv4pool-coip-0b9f2b4516b10245f
-    alb.ingress.kubernetes.io/target-type: ip
-    #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:279527989600:certificate/c3bc4666-2862-49e8-8305-4ab685a7f198
-spec:
-  ingressClassName: alb
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: argocd-server-alb
-                port:
-                  number: 80 #Toma el puerto expuesto en el servicio ArgoCD
-
-```
-
-Asegúrese que la subred donde son creados los nodos de su clúster tengan el tag **kubernetes.io/role/internal-elb=1**
-
-### Establece el acceso al REPO que usa ARGO para GITOPS
-
-Este es el repo de GitOPS donde se establece el proceso
-ArgoCD token en Git: ycH7acat51-3taFoiDex
-
-```yaml
-# gitlab-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: gitlab-gitops-secret
-  namespace: argocd
-  labels:
-    argocd.argoproj.io/secret-type: repository
-type: Opaque
-stringData:
-  url: https://gitlabcloud.banco.bestado.cl/arquitectura/terraform/gitops/poc.git
-  username: jmuno10@bancoestado.cl
-  password: ycH7acat51-3taFoiDex
-```
 
 ## Ejemplo de cambio de la imagen de la APP para que ARGO la lea y aplique valores
 
