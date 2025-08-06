@@ -1,4 +1,10 @@
 # Agregando aplicaciones
+- [Agregando aplicaciones](#agregando-aplicaciones)
+  - [Agregado archivos al repositorio](#agregado-archivos-al-repositorio)
+  - [Creando la aplicación](#creando-la-aplicación)
+  - [Agregando una segunda aplicación](#agregando-una-segunda-aplicación)
+  - [Pruebas de cambios a la fuente de la verdad](#pruebas-de-cambios-a-la-fuente-de-la-verdad)
+  - [Eliminando aplicaciones](#eliminando-aplicaciones)
 
 Para agregar una aplicación se puede hacer directamente desde el repositorio, para ellos debemos tener
 los archivos yaml pertenecientes a la aplicación.
@@ -86,5 +92,43 @@ argocd app get argocd/${APP_NAME}
 # Para activar la sincronización
 argocd app sync argocd/${APP_NAME}
 
+```
 
+## Agregando una segunda aplicación
+
+Agregue otro deployment a repositorio de la APP, por ejemplo en otra carpeta llamada noejs-app y luego cree la APP desde argocd
+
+```bash
+# Defina nuevo nombre y path de la nueva app sobre el mismo repositorio
+APP_NAME="nodejs-app"
+APP_REPO_PATH="nodejs-app"
+APP_NS="app2"
+
+kubectl create ns $APP_NS
+argocd app create ${APP_NAME} --repo ${APP_REPO} --path ${APP_REPO_PATH} --dest-server ${ARGO_CLUSTER} --dest-namespace ${APP_NS}
+
+```
+
+## Pruebas de cambios a la fuente de la verdad
+
+Para generar cambios y verificarlos en Argocd, pude modificar el estado de los Pods, servicios y otro recurso
+
+```bash
+# Cambie el replicaset de una app
+kubectl scale --replicas=5 deployment/nodejs-ms -n app2
+
+# Luego revise el estado de la APP y observe el estado OutOfSync
+argocd app list
+
+# Obtenga el detalle del cambio
+argocd app get argocd/nodejs-app --output tree
+
+# Vuelva al estado de la verdad 
+argocd app sync argocd/nodejs-app 
+```
+
+## Eliminando aplicaciones
+
+```bash
+argocd app delete argocd/nodejs-app
 ```
