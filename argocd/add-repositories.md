@@ -48,3 +48,64 @@ stringData:
   password: ycH7acat51-3taFoiDex
   insecure: "true"
 ```
+
+## Acceso con certificados
+
+Para evitar el acceso inseguro hay que usar el certificado cliente
+
+```bash
+# Obtengo mi certificado cliente
+openssl s_client -connect gitlabcloud.banco.bestado.cl:443 -showcerts </dev/null 2>/dev/null \
+  | openssl x509 -outform PEM > gitlab-ca.crt
+
+# Copiar el certificado a la carpeta de certificados
+sudo cp gitlab-ca.crt /etc/ssl/certs/
+
+# Creo el secreto con el certificado
+kubectl create secret generic gitlab-cert \
+  -n argocd \
+  --from-file=ca.crt=gitlab-ca.crt
+
+
+# Modificar el deploy del repository server de Argo para agregar el certificado
+kubectl -n argocd patch deployment argocd-repo-server \
+  --type='json' \
+  -p='[
+    {
+      "op": "add",
+      "path": "/spec/template/spec/volumes/-",
+      "value": {
+        "name": "custom-ca",
+        "secret": {
+          "secretName": "gitlab-cert"
+        }
+      }
+    },
+    {
+      "op": "add",
+      "path": "/spec/template/spec/containers/0/volumeMounts/-",
+      "value": {
+        "name": "custom-ca",
+        "mountPath": "/etc/ssl/certs",
+        "subPath": "gitlab-ca.crt",
+        "readOnly": true
+      }
+    }
+  ]'
+
+# Reiniciar el Argo Repository Server
+kubectl -n argocd rollout restart deployment argocd-repo-server
+
+
+# Agrego el repo con uso del certificado
+GIT_USER="jmuno10" 
+GIT_PWD="ycH7acat51-3taFoiDex"
+
+argocd repo add https://gitlabcloud.banco.bestado.cl/arquitectura/terraform/gitops/poc.git \
+  --username $GIT_USER \
+  --password $GIT_PWD \
+  --insecure-skip-server-verification
+
+
+
+```
