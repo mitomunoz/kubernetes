@@ -5,6 +5,7 @@
   - [Agregando una segunda aplicación](#agregando-una-segunda-aplicación)
   - [Pruebas de cambios a la fuente de la verdad](#pruebas-de-cambios-a-la-fuente-de-la-verdad)
   - [Eliminando aplicaciones](#eliminando-aplicaciones)
+  - [Respaldo de la configuración de ArgoCD](#respaldo-de-la-configuración-de-argocd)
 
 Para agregar una aplicación se puede hacer directamente desde el repositorio, para ellos debemos tener
 los archivos yaml pertenecientes a la aplicación.
@@ -99,13 +100,19 @@ argocd app sync argocd/${APP_NAME}
 Agregue otro deployment a repositorio de la APP, por ejemplo en otra carpeta llamada noejs-app y luego cree la APP desde argocd
 
 ```bash
+# Usar el nombre fijo cuando el cluster es local 
+ARGO_CLUSTER="https://kubernetes.default.svc"
+
 # Defina nuevo nombre y path de la nueva app sobre el mismo repositorio
 APP_NAME="nodejs-app"
+APP_REPO="https://gitlabcloud.banco.bestado.cl/arquitectura/terraform/gitops/poc.git"
 APP_REPO_PATH="nodejs-app"
 APP_NS="app2"
 
 kubectl create ns $APP_NS
 argocd app create ${APP_NAME} --repo ${APP_REPO} --path ${APP_REPO_PATH} --dest-server ${ARGO_CLUSTER} --dest-namespace ${APP_NS}
+
+argocd app sync argocd/nodejs-app 
 
 ```
 
@@ -131,4 +138,17 @@ argocd app sync argocd/nodejs-app
 
 ```bash
 argocd app delete argocd/nodejs-app
+```
+
+## Respaldo de la configuración de ArgoCD
+
+Para respaldar la configuración de ArgoCD y ayudar en un escenario de Disaster Recovery
+
+```bash
+# Crea los respaldos
+argocd admin export > backup.yaml
+
+# Restaura un respaldo
+argocd admin import - < backup.yaml
+
 ```
