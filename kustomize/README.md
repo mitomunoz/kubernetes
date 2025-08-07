@@ -11,6 +11,6 @@ cd base
 kubectl apply -k ./
 
 # Aplicamos el despliegue en dev
-cd ..
-kubectl apply -k ./dev
+kubectl apply -k overlays/dev
+
 ```
