@@ -1,0 +1,18 @@
+# kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Base kustomization.yaml
+resources:
+- deployment.yaml
+
+# labels to apply to all resources
+labels:
+- includeSelectors: true
+  pairs:
+    app: my-ms-app
+    environment: local
+    version: v1.0.0
+
+# Environment-specific kustomizations
+namespace: local

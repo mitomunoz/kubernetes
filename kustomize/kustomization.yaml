@@ -1,0 +1,29 @@
+# kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# namespace to use for all resources
+namespace: mi-namespace
+
+# labels to apply to all resources
+labels:
+- includeSelectors: true
+  pairs:
+    app: mi-ms
+    environment: development
+    version: v1
+
+# prefijos y sufijos para los nombres de los recursos
+namePrefix: mi-
+nameSuffix: -v1
+
+# lista de recursos
+resources:
+- deployment.yaml
+
+# imagenes a reemplazar
+images:
+- name: mitotech:ms-nodejs.latest
+  newName: mitotech:ms-nodejs
+  newTag: latest
+

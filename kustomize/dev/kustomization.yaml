@@ -1,0 +1,12 @@
+# kustomization.yaml contents
+resources:
+- ./../base
+
+# Environment-specific kustomizations
+namePrefix: dev-
+namespace: dev-ns
+
+labels:
+- includeSelectors: true
+  pairs:
+    environment: dev
