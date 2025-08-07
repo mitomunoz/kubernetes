@@ -5,9 +5,9 @@ kind: Kustomization
 
 # kustomization.yaml contents
 resources:
-- ./dev
-- ./qa
-- ./prod
+- ./overlays/dev
+- ./overlays/qa
+- ./overlays/prod
 namePrefix: cluster-a-
 
 

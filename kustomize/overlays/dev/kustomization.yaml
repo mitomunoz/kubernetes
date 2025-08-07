@@ -4,7 +4,7 @@ kind: Kustomization
 
 # kustomization.yaml contents
 resources:
-- ./../base
+- ./../../base
 
 # Environment-specific kustomizations
 namePrefix: dev-
@@ -18,6 +18,6 @@ labels:
 
 # Define images for the base kustomization
 images:
-  - name: ms-image
+  - name: localhost:5000/microservicio-nodejs
     newName: localhost:5000/microservicio-nodejs
     newTag: dev

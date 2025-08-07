@@ -1,6 +1,6 @@
 # kustomization.yaml contents
 resources:
-- ./../base
+- ./../../base
 
 # Environment-specific kustomizations
 namePrefix: prod-
@@ -10,3 +10,9 @@ labels:
 - includeSelectors: true
   pairs:
     environment: prod
+
+# Define images for the base kustomization
+images:
+  - name: localhost:5000/microservicio-nodejs
+    newName: localhost:5000/microservicio-nodejs
+    newTag: prod

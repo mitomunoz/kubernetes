@@ -17,8 +17,3 @@ labels:
 # Environment-specific kustomizations
 namespace: local
 
-# Define images for the base kustomization
-images:
-  - name: ms-image
-    newName: localhost:5000/microservicio-nodejs
-    newTag: local
