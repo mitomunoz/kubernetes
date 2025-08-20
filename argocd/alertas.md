@@ -49,7 +49,7 @@ kubectl exec -n argocd -it \
 
 # Crear el secreto
 kubectl -n argocd create secret generic argocd-notifications-secret \
-  --from-literal=teams-webhook-url="${MS_TEAMS_WEB_HOOK}"
+  --from-literal=teams-webhook-url="${MS_TEAMS_WEB_HOOK}" --dry-run=client -o yaml | kubectl apply -f -
 
 ```
 
@@ -89,23 +89,16 @@ kubectl get app -n argocd ${APP_NAME} -o json  | jq '.metadata.annotations'
 
 APP_NAME="rust-app"
 
-kubectl patch app ${APP_NAME} -n argocd \
-  --type merge \
-  -p '{
-    "metadata": {
-      "annotations": {
-        "notifications.argoproj.io/subscribe.on-degraded.teams": "",
-        "notifications.argoproj.io/subscribe.on-recovered.teams": ""
-      }
-    }
-  }'
 
+# Ejempli para agregar outOfSync
 kubectl patch app ${APP_NAME} -n argocd \
   --type merge \
   -p '{
     "metadata": {
       "annotations": {
-        "notifications.argoproj.io/subscribe.on-outofsync.teams": ""
+        "notifications.argoproj.io/subscribe.on-outofsync.teams": "GitOps"
+        "notifications.argoproj.io/subscribe.on-sync-succeeded.teams": "GitOps"
+        
       }
     }
   }'

@@ -8,44 +8,79 @@ data:
     argocdUrl: "https://localhost:8080"
 
 
- # Servicio Teams
+ # Servicio de notificaciones en teams
   service.teams: |
-    webhook: $teams-webhook-url
     recipientUrls:
-      channelName: $teams-webhook-url
+      GitOps: $teams-webhook-url
 
   # Trigger para OutOfSync
   trigger.on-outofsync: |
     - when: app.status.sync.status == 'OutOfSync'
       send: [app-outofsync-teams]
 
-  # Template para alertas
+  # Trigger para vuelta a sincronización
+  trigger.on-sync-succeeded: |
+    - when: app.status.sync.status == 'Synced'
+      send: [app-sync-succeeded]
+
+  template.app-sync-succeeded: |
+    teams:
+      themeColor: "#000080"
+      sections: |
+        [{
+          "facts": [
+            {
+              "name": "Estado de sincronización: ",
+              "value": "{{.app.status.sync.status}}"
+            },
+            {
+              "name": "Repositorio: ",
+              "value": "{{.app.spec.source.repoURL}}"
+            }
+          ]
+        }]
+      potentialAction: |-
+        [{
+          "@type":"OpenUri",
+          "name":"Operation Details",
+          "targets":[{
+            "os":"default",
+            "uri":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
+          }]
+        }]
+      title: La aplicacion "{{.app.metadata.name}}" ha sido sincronizada exitosamente!
+      text: Aplicación {{.app.metadata.name}} sincronizada a las {{.app.status.operationState.finishedAt}} horas.
+      summary: "{{.app.metadata.name}} exitosamente sincronizada"
+
+  # Template para alertas de desincronización
   template.app-outofsync-teams: |
     teams:
-      message: |
-        {
-          "@type": "MessageCard",
-          "@context": "http://schema.org/extensions",
-          "themeColor": "FF0000",
-          "summary": "ArgoCD Alert",
-          "sections": [{
-            "activityTitle": "🚨 Aplicación {{.app.metadata.name}} con problemas",
-            "facts": [
-              { "name": "Estado de Salud", "value": "{{.app.status.health.status}}" },
-              { "name": "Estado de Sync", "value": "{{.app.status.sync.status}}" },
-              { "name": "Proyecto", "value": "{{.app.spec.project}}" },
-              { "name": "Namespace", "value": "{{.app.spec.destination.namespace}}" },
-              { "name": "Última sincronización", "value": "{{.app.status.operationState.finishedAt}}" }
-            ],
-            "markdown": true
-          }],
-          "potentialAction": [{
-            "@type": "OpenUri",
-            "name": "Abrir en ArgoCD",
-            "targets": [
-              { "os": "default", "uri": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}" }
-            ]
+      themeColor: "#80000b"
+      sections: |
+        [{
+          "facts": [
+            {
+              "name": "Estado de sincronización: ",
+              "value": "{{.app.status.sync.status}}"
+            },
+            {
+              "name": "Repositorio: ",
+              "value": "{{.app.spec.source.repoURL}}"
+            }
+          ]
+        }]
+      potentialAction: |-
+        [{
+          "@type":"OpenUri",
+          "name":"Operation Details",
+          "targets":[{
+            "os":"default",
+            "uri":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"
           }]
-        }
+        }]
+      title: La aplicación "{{.app.metadata.name}}" ha perdido el estado de sincronización!
+      text: Aplicación {{.app.metadata.name}} dessincronizada a las {{.app.status.operationState.finishedAt}} horas.
+      summary: "{{.app.metadata.name}} desincronizada!"
+
 
   
