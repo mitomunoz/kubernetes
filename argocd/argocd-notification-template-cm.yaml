@@ -25,7 +25,7 @@ data:
 
   template.app-sync-succeeded: |
     teams:
-      themeColor: "#000080"
+      themeColor: "#00a000"
       sections: |
         [{
           "facts": [
@@ -55,7 +55,7 @@ data:
   # Template para alertas de desincronización
   template.app-outofsync-teams: |
     teams:
-      themeColor: "#80000b"
+      themeColor: "#ff0000"
       sections: |
         [{
           "facts": [
