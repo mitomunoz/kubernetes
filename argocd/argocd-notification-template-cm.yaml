@@ -6,12 +6,15 @@ metadata:
 data:
   context: |
     argocdUrl: "https://localhost:8080"
+    # Use el ingres del controller de argocd para pruebas en AWS
+    #     argocdUrl: "https://internal-k8s-argocd-argocd-8efea739a6-1432857483.us-east-1.elb.amazonaws.com"
 
 
  # Servicio de notificaciones en teams
   service.teams: |
     recipientUrls:
       GitOps: $teams-webhook-url
+      # para mas aplicaciones repita GitOps1, GitOps2, ... y agregue a las aplicaciones las anotaciones correspondientes
 
   # Trigger para OutOfSync
   trigger.on-outofsync: |
@@ -23,6 +26,12 @@ data:
     - when: app.status.sync.status == 'Synced'
       send: [app-sync-succeeded]
 
+  # Trigger para estado desconocido
+  trigger.on-sync-status-unknown: |
+    - when: app.status.sync.status == 'Unknown'
+      send: [app-sync-status-unknown-teams]
+
+  # Template para estado sincronizado
   template.app-sync-succeeded: |
     teams:
       themeColor: "#00a000"
